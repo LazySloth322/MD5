@@ -1,5 +1,3 @@
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
@@ -8,31 +6,35 @@ import java.util.Scanner;
 
 public class Main{
     public static void main(String[] args){
-        Scanner scanner = new Scanner(System.in);
+        try (Scanner scanner = new Scanner(System.in)) {
+            MD5 md5 = new MD5();
 
-        System.out.println("Enter file path or text:");
-        String input = scanner.nextLine();
+            System.out.println("Choose mode: (1 - hash text; 2 - hash file)");
+            String mode = scanner.nextLine().trim();
 
-        MD5 md5 = new MD5();
+            byte[] data;
 
-        try{
-            //try to open file
-            //if throws "no such file"-ish error, hash text
-            //if throws some other error - abort execution
+            switch (mode) {
+                case "1" -> {
+                    System.out.print("Enter text: ");
+                    String input = scanner.nextLine();
+                    data = input.getBytes(StandardCharsets.UTF_8);
+                }
+                case "2" -> {
+                    System.out.print("Enter file path: ");
+                    String path = scanner.nextLine().trim();
+                    data = Files.readAllBytes(Path.of(path));
+                }
+                default -> {
+                    throw new IllegalArgumentException("Incorrect mode.");
+                }
+            }
 
-            input = Files.readString(
-                    Path.of(input),
-                    StandardCharsets.UTF_8
-            );
+            String result = md5.run(data);
+            System.out.println("Result: " + result);
 
-        }catch (NoSuchFileException e){
-            System.out.println("File not found. Hashing input string...");
-        }catch (Exception e){
-            e.printStackTrace();
-            return;
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
         }
-
-        System.out.print(input+"\n");
-        md5.run(input);
     }
 }

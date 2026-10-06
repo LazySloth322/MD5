@@ -108,10 +108,10 @@ public class MD5 {
         }
 
         return new int[] {
-                a0 + A,
-                b0 + B,
-                c0 + C,
-                d0 + D
+                finalState[0] + A,
+                finalState[1] + B,
+                finalState[2] + C,
+                finalState[3] + D
         };
     }
 

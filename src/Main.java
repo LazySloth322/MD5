@@ -1,3 +1,5 @@
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 public class Main{
@@ -12,13 +14,21 @@ public class Main{
             //if throws "no such file"-ish error, hash text
             //if throws some other error - abort execution
 
+            File file = new File(input);
 
+            Scanner reader = new Scanner(file);
+            while(reader.hasNextLine()){
+                String data = reader.nextLine();
+                System.out.println(data);
+            }
 
             MD5 md5 = new MD5(input);
             md5.run();
 
-        }catch (Exception e){
-            e.printStackTrace();
+        }catch (FileNotFoundException e){
+            System.out.println("File not found...");
+            MD5 md5 = new MD5(input);
+            md5.run();
         }
     }
 }
